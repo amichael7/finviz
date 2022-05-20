@@ -27,7 +27,7 @@ def get_table(page_html: requests.Response, headers, rows=None, **kwargs):
 
     # If rows is different from -2, this function is called from Screener
     if rows != -2:
-        for row_number, row_data in enumerate(all_rows, 1):
+        for row_number, row_data in enumerate(all_rows):
             data_sets.append(dict(zip(headers, row_data)))
             if row_number == rows:  # If we have reached the required end
                 break
