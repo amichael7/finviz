@@ -4,16 +4,15 @@ import urllib.request
 from urllib.parse import parse_qs as urlparse_qs
 from urllib.parse import urlencode, urlparse
 
-from bs4 import BeautifulSoup
-from user_agent import generate_user_agent
-
 import finviz.helper_functions.scraper_functions as scrape
+from bs4 import BeautifulSoup
 from finviz.helper_functions.display_functions import create_table_string
 from finviz.helper_functions.error_handling import InvalidTableType, NoResults
 from finviz.helper_functions.request_functions import (Connector,
                                                        http_request_get,
                                                        sequential_data_scrape)
 from finviz.helper_functions.save_data import export_to_csv, export_to_db
+from user_agent import generate_user_agent
 
 TABLE_TYPES = {
     "Overview": "111",
@@ -70,6 +69,7 @@ class Screener(object):
         custom=None,
         user_agent=generate_user_agent(),
         request_method="sequential",
+        scraping_delay_in_s='0',
     ):
         """
         Initializes all variables to its values
@@ -123,6 +123,7 @@ class Screener(object):
         self._signal = signal
         self._user_agent = user_agent
         self._request_method = request_method
+        self._scraping_delay_in_s = scraping_delay_in_s
 
         self.analysis = []
         self.data = self.__search_screener()
@@ -453,6 +454,7 @@ class Screener(object):
                 self._user_agent,
                 self.headers,
                 self._rows,
+                scraping_delay_in_s=self._scraping_delay_in_s,
             )
 
         data = []
