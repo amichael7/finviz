@@ -58,7 +58,7 @@ def finviz_request(url: str, user_agent: str) -> Response:
 
 
 def sequential_data_scrape(
-    scrape_func: Callable, urls: List[str], user_agent: str, scraper_delay_in_s: int = 0, *args, **kwargs
+    scrape_func: Callable, urls: List[str], user_agent: str, *args, scraper_delay_in_s: int = 0, **kwargs
 ) -> List[Dict]:
     data = []
 
