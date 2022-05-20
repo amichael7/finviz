@@ -6,13 +6,12 @@ import aiohttp
 import requests
 import tenacity
 import urllib3
+from finviz.config import connection_settings
+from finviz.helper_functions.error_handling import ConnectionTimeout
 from lxml import html
 from requests import Response
 from tqdm import tqdm
 from user_agent import generate_user_agent
-
-from finviz.config import connection_settings
-from finviz.helper_functions.error_handling import ConnectionTimeout
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -59,15 +58,19 @@ def finviz_request(url: str, user_agent: str) -> Response:
 
 
 def sequential_data_scrape(
-    scrape_func: Callable, urls: List[str], user_agent: str, *args, **kwargs
+    scrape_func: Callable, urls: List[str], user_agent: str, scraper_delay_in_s = 0: int, *args, **kwargs
 ) -> List[Dict]:
     data = []
 
+    n_urls, url_ctr = len(urls), 0
     for url in tqdm(urls, disable="DISABLE_TQDM" in os.environ):
         try:
             response = finviz_request(url, user_agent)
             kwargs["URL"] = url
             data.append(scrape_func(response, *args, **kwargs))
+            if url_ctr < n_urls - 1:
+                time.sleep(scraper_delay_in_s)
+            url_ctr += 1
         except Exception as exc:
             raise exc
 
