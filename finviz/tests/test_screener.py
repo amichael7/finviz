@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 
 import lxml
@@ -14,11 +15,26 @@ class TestScreener(unittest.TestCase):
         stock_list = Screener(
             filters=["sh_curvol_o300", "ta_highlow52w_b0to10h", "ind_stocksonly"]
         )
-        print(stock_list)
         count = 0
         for _ in stock_list:
             count += 1
         assert len(stock_list) == count
+
+    def test_screener_scraper_delay(self):
+        """ Tests that Screener with scraper with non-zero delay does not raise error. """
+        try:
+            Screener(
+                filters=[
+                    "sh_curvol_o300",
+                    "ta_highlow52w_b0to10h",
+                    "ind_stocksonly",
+                    "sh_outstanding_o1000",
+                ],
+                scraper_delay_in_s=2,
+            )
+        except:
+            # assert 0, 'scraper delay param resulted in error'
+            raise
 
     def test_screener_stability(self):
         """ Requested in #77: https://github.com/mariostoev/finviz/issues/77 """
@@ -85,15 +101,15 @@ class TestScreener(unittest.TestCase):
         price_target = get_analyst_price_targets("AAPL")[0]
         assert price_target
 
-        try:
-            print(price_target["date"])
-            # parse()
+        try:    
+            datetime.strptime(price_target["date"], '%Y-%m-%d')
         except ValueError:
             assert False
 
-        assert type(price_target["category"]) == lxml.etree._ElementUnicodeResult
-        assert type(price_target["analyst"]) == lxml.etree._ElementUnicodeResult
-        assert type(price_target["rating"]) == lxml.etree._ElementUnicodeResult
+        print()
+        assert type(price_target["category"]) == str
+        assert type(price_target["analyst"]) == str
+        assert type(price_target["rating"]) == str
         assert type(price_target.get("price_from", 0.0)) == float
         assert type(price_target.get("price_to", 0.0)) == float
 
@@ -102,6 +118,7 @@ class TestScreener(unittest.TestCase):
         """ Verifies news results are greater than 0. """
         news = get_all_news()
         assert len(news) > 0
+
 
 if __name__ == '__main__':
     unittest.main()
