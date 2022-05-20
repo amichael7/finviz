@@ -69,7 +69,7 @@ class Screener(object):
         custom=None,
         user_agent=generate_user_agent(),
         request_method="sequential",
-        scraping_delay_in_s='0',
+        scraper_delay_in_s=0,
     ):
         """
         Initializes all variables to its values
@@ -123,7 +123,7 @@ class Screener(object):
         self._signal = signal
         self._user_agent = user_agent
         self._request_method = request_method
-        self._scraping_delay_in_s = scraping_delay_in_s
+        self._scraper_delay_in_s = scraper_delay_in_s
 
         self.analysis = []
         self.data = self.__search_screener()
@@ -454,7 +454,7 @@ class Screener(object):
                 self._user_agent,
                 self.headers,
                 self._rows,
-                scraping_delay_in_s=self._scraping_delay_in_s,
+                scraper_delay_in_s=self._scraper_delay_in_s,
             )
 
         data = []
