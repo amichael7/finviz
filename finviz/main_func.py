@@ -71,7 +71,7 @@ def get_insider(ticker):
 
     get_page(ticker)
     page_parsed = STOCK_PAGE[ticker]
-    outer_table = page_parsed.cssselect('table[class="body-table"]')
+    outer_table = page_parsed.cssselect('table[class="body-table insider-trading-table"]')
 
     if len(outer_table) == 0:
         return []
@@ -175,7 +175,9 @@ def get_analyst_price_targets(ticker, last_ratings=5):
     try:
         get_page(ticker)
         page_parsed = STOCK_PAGE[ticker]
-        table = page_parsed.cssselect('table[class="fullview-ratings-outer"]')[0]
+        table = page_parsed.cssselect(
+            'table[class="js-table-ratings fullview-ratings-outer"]'
+        )[0]
 
         for row in table:
             rating = row.xpath("td//text()")
